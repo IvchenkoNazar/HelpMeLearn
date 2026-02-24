@@ -4,7 +4,10 @@
       "Bash(npx create-nx-workspace@latest:*)",
       "Bash(rm:*)",
       "Bash(tail:*)",
-      "Bash(npx nx:*)"
+      "Bash(npx nx:*)",
+      "Bash(gh auth:*)",
+      "Bash(NX_IGNORE_UNSUPPORTED_TS_SETUP=true npx nx:*)",
+      "Bash(git add:*)"
     ]
   }
 }
