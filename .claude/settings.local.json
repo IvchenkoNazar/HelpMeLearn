@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npx create-nx-workspace@latest:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(tail:*)",
+      "Bash(npx nx:*)"
     ]
   }
 }
