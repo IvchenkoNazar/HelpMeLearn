@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-nx-workspace@latest:*)",
+      "Bash(rm:*)"
+    ]
+  }
+}
