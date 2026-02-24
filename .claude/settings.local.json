@@ -7,7 +7,8 @@
       "Bash(npx nx:*)",
       "Bash(gh auth:*)",
       "Bash(NX_IGNORE_UNSUPPORTED_TS_SETUP=true npx nx:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(head:*)"
     ]
   }
 }
