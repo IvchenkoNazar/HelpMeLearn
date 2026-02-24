@@ -11,6 +11,9 @@
     },
     {
       "path": "./apps/frontend-e2e"
+    },
+    {
+      "path": "./libs/shared-types"
     }
   ]
 }
