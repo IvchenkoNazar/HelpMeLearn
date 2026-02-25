@@ -9,7 +9,8 @@
       "Bash(NX_IGNORE_UNSUPPORTED_TS_SETUP=true npx nx:*)",
       "Bash(git add:*)",
       "Bash(head:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(set -a && source .env && set +a && timeout 8 node apps/backend/dist/main.js 2>&1)"
     ]
   }
 }

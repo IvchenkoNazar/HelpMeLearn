@@ -1,106 +1,151 @@
-# New Nx Repository
+# HelpMeLearn
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+AI-powered interview preparation platform. Practice technical interviews, track your progress, and get personalized guidance.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Tech Stack
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-## Finish your Nx platform setup
+| Layer | Technology |
+|---|---|
+| Monorepo | Nx 22 |
+| Backend | NestJS 11, Passport JWT (JWKS/ES256) |
+| Frontend | Angular 19, TailwindCSS v4 |
+| Auth & DB | Supabase (Auth + Postgres) |
+| Cache | Redis (ioredis) |
+| Shared types | `@org/shared-types` (TypeScript interfaces) |
 
-🚀 [Finish setting up your workspace](https://cloud.nx.app/connect/6bdwLM9p2u) to get faster builds with remote caching, distributed task execution, and self-healing CI. [Learn more about Nx Cloud](https://nx.dev/ci/intro/why-nx-cloud).
-## Generate a library
-
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
-```
-
-## Run tasks
-
-To build the library use:
-
-```sh
-npx nx build pkg1
-```
-
-To run any task with Nx use:
-
-```sh
-npx nx <target> <project-name>
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
+## Project Structure
 
 ```
-npx nx release
+apps/
+  backend/        NestJS API (port 3000)
+  frontend/       Angular SPA (port 4200)
+libs/
+  shared-types/   Shared TypeScript DTOs
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+## Prerequisites
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Node.js 20+
+- npm 10+
+- A [Supabase](https://supabase.com) project
+- Redis (optional for M1 — used from M3 onwards)
 
-## Keep TypeScript project references up to date
+## Local Setup
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+**1. Install dependencies**
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+```bash
+npm install
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+**2. Configure environment**
 
-```sh
-npx nx sync:check
+```bash
+cp .env.example .env
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+Fill in `.env` with your Supabase credentials:
 
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+SUPABASE_SECRET_KEY=sb_secret_...
+REDIS_URL=redis://localhost:6379
+PORT=3000
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Update `apps/frontend/src/environments/environment.ts` with the same URL and publishable key.
 
-## Install Nx Console
+**3. Set up Supabase**
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Run the following SQL in the Supabase SQL Editor to create the profiles table:
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```sql
+create table public.profiles (
+  id                 uuid references auth.users(id) on delete cascade primary key,
+  full_name          text,
+  avatar_url         text,
+  subscription_tier  text not null default 'free',
+  streak_count       int not null default 0,
+  last_activity_date date,
+  daily_goal         int not null default 5,
+  created_at         timestamptz not null default now()
+);
 
-## Useful links
+alter table public.profiles enable row level security;
 
-Learn more:
+create policy "profiles: select own" on public.profiles for select using (auth.uid() = id);
+create policy "profiles: update own" on public.profiles for update using (auth.uid() = id);
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, full_name, avatar_url)
+  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$ language plpgsql security definer;
 
-And join the Nx community:
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Running the Apps
+
+**Backend** (NestJS on port 3000):
+
+```bash
+npx nx serve backend
+```
+
+**Frontend** (Angular on port 4200):
+
+```bash
+npx nx serve frontend
+```
+
+**Both simultaneously** (two terminals):
+
+```bash
+# Terminal 1
+npx nx serve backend
+
+# Terminal 2
+npx nx serve frontend
+```
+
+## API Endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/auth/register` | No | Register with email/password |
+| POST | `/api/auth/login` | No | Login with email/password |
+| POST | `/api/auth/refresh` | No | Refresh access token |
+| POST | `/api/auth/logout` | No | Sign out |
+| GET | `/api/auth/google` | No | Get Google OAuth URL |
+| GET | `/api/profiles/me` | JWT | Get current user profile |
+| PUT | `/api/profiles/me` | JWT | Update current user profile |
+
+## Running Tests
+
+```bash
+# All backend unit tests
+npx nx test backend
+
+# Build all projects
+npx nx run-many -t build
+
+# Run affected tasks
+npx nx affected -t test,build
+```
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (safe for clients) |
+| `SUPABASE_SECRET_KEY` | Supabase secret key (server-side only) |
+| `REDIS_URL` | Redis connection URL (default: `redis://localhost:6379`) |
+| `PORT` | Backend port (default: `3000`) |
