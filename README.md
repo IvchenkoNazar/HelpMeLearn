@@ -18,7 +18,7 @@ AI-powered interview preparation platform. Practice technical interviews, track 
 ```
 apps/
   backend/        NestJS API (port 3000)
-  frontend/       Angular SPA (port 4200)
+  frontend/       Angular SPA (port 4444)
 libs/
   shared-types/   Shared TypeScript DTOs
 ```
