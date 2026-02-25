@@ -19,7 +19,8 @@
             "input": "apps/frontend/public"
           }
         ],
-        "styles": ["apps/frontend/src/styles.css"]
+        "styles": ["apps/frontend/src/styles.css"],
+        "polyfills": ["zone.js"]
       },
       "configurations": {
         "production": {
