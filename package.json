@@ -2,7 +2,10 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "seed:fields": "ts-node -r tsconfig-paths/register apps/backend/src/seeds/seed-fields-topics.ts",
+    "seed:superadmin": "ts-node -r tsconfig-paths/register apps/backend/src/seeds/seed-superadmin.ts"
+  },
   "private": true,
   "devDependencies": {
     "@angular-devkit/core": "~21.1.0",
