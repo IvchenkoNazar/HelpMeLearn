@@ -55,6 +55,11 @@ export const appRoutes: Routes = [
           { path: '', redirectTo: 'users', pathMatch: 'full' },
         ],
       },
+      {
+        path: 'roadmap',
+        loadComponent: () =>
+          import('./features/roadmap/roadmap.component').then((m) => m.RoadmapComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
