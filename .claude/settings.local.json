@@ -10,7 +10,19 @@
       "Bash(git add:*)",
       "Bash(head:*)",
       "Bash(git push:*)",
-      "Bash(set -a && source .env && set +a && timeout 8 node apps/backend/dist/main.js 2>&1)"
+      "Bash(set -a && source .env && set +a && timeout 8 node apps/backend/dist/main.js 2>&1)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(git commit:*)",
+      "Bash(git worktree:*)",
+      "Bash(npm install:*)",
+      "Bash(git log:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(npm run:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git:*)"
     ]
   }
 }
