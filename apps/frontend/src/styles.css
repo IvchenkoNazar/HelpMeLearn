@@ -20,3 +20,9 @@
     @apply bg-white text-gray-900 antialiased;
   }
 }
+
+@media print {
+  aside, nav, button, .no-print { display: none !important; }
+  main { padding-left: 0 !important; }
+  body { background: white !important; color: black !important; }
+}

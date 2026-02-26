@@ -55,6 +55,23 @@ export const appRoutes: Routes = [
           { path: '', redirectTo: 'users', pathMatch: 'full' },
         ],
       },
+      {
+        path: 'roadmap',
+        loadComponent: () =>
+          import('./features/roadmap/roadmap.component').then((m) => m.RoadmapComponent),
+      },
+      {
+        path: 'topics/:id',
+        loadComponent: () =>
+          import('./features/learning/topic-detail/topic-detail.component').then(
+            (m) => m.TopicDetailComponent,
+          ),
+      },
+      {
+        path: 'bookmarks',
+        loadComponent: () =>
+          import('./features/bookmarks/bookmarks.component').then((m) => m.BookmarksComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
