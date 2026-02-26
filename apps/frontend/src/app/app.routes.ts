@@ -60,6 +60,13 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/roadmap/roadmap.component').then((m) => m.RoadmapComponent),
       },
+      {
+        path: 'topics/:id',
+        loadComponent: () =>
+          import('./features/learning/topic-detail/topic-detail.component').then(
+            (m) => m.TopicDetailComponent,
+          ),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
