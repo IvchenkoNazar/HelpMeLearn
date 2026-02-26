@@ -72,6 +72,21 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/bookmarks/bookmarks.component').then((m) => m.BookmarksComponent),
       },
+      {
+        path: 'progress',
+        loadComponent: () =>
+          import('./features/progress/progress.component').then((m) => m.ProgressComponent),
+      },
+      {
+        path: 'program/edit',
+        loadComponent: () =>
+          import('./features/progress/program-editor.component').then((m) => m.ProgramEditorComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
