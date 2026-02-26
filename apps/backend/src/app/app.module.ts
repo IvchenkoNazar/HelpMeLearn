@@ -11,6 +11,11 @@ import { TopicsModule } from '../topics/topics.module';
 import { OnboardingModule } from '../onboarding/onboarding.module';
 import { ProgramsModule } from '../programs/programs.module';
 import { AdminModule } from '../admin/admin.module';
+import { ContentModule } from '../content/content.module';
+import { QuizModule } from '../quiz/quiz.module';
+import { NotesModule } from '../notes/notes.module';
+import { BookmarksModule } from '../bookmarks/bookmarks.module';
+import { SearchModule } from '../search/search.module';
 
 @Module({
   imports: [
@@ -25,6 +30,11 @@ import { AdminModule } from '../admin/admin.module';
     OnboardingModule,
     ProgramsModule,
     AdminModule,
+    ContentModule,
+    QuizModule,
+    NotesModule,
+    BookmarksModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
