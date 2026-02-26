@@ -1,13 +1,14 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeService } from '../../core/theme.service';
 import { AuthService } from '../../core/auth.service';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
+import { SearchComponent } from '../../shared/components/search/search.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, LogoComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, LogoComponent, SearchComponent],
   template: `
     <!-- Desktop sidebar -->
     <aside [class]="sidebarClass()">
@@ -37,6 +38,16 @@ import { LogoComponent } from '../../shared/components/logo/logo.component';
           }
         </button>
       </div>
+
+      <!-- Search button -->
+      <button (click)="showSearch.set(true)"
+              class="mx-2 mb-2 flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              [class.justify-center]="collapsed()">
+        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        @if (!collapsed()) { <span class="flex-1 text-left">Search</span><kbd class="text-xs opacity-50">⌘K</kbd> }
+      </button>
 
       <!-- Nav links -->
       <nav class="flex-1 px-2 py-3 flex flex-col gap-0.5 overflow-y-auto">
@@ -124,6 +135,10 @@ import { LogoComponent } from '../../shared/components/logo/logo.component';
       </div>
     </main>
 
+    @if (showSearch()) {
+      <app-search (close)="showSearch.set(false)" />
+    }
+
     <!-- Mobile bottom navigation -->
     <nav class="lg:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-50">
       <div class="flex items-center justify-around h-16">
@@ -169,6 +184,15 @@ import { LogoComponent } from '../../shared/components/logo/logo.component';
 })
 export class MainLayoutComponent {
   collapsed = signal(localStorage.getItem('sidebar-collapsed') === 'true');
+  showSearch = signal(false);
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(e: KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      this.showSearch.update((v) => !v);
+    }
+  }
 
   sidebarClass = computed(() =>
     `hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 transition-all duration-200 overflow-hidden ${this.collapsed() ? 'lg:w-16' : 'lg:w-60'}`,
