@@ -71,6 +71,43 @@ export class AIService {
     return JSON.parse(this.extractJson(raw));
   }
 
+  async generateTopicSummary(
+    userId: string,
+    tier: string,
+    fieldTitle: string,
+    topicTitle: string,
+    description: string,
+  ): Promise<string> {
+    await this.checkAndIncrementUsage(userId, tier);
+    const provider = this.factory.getProvider();
+    return provider.generate(PROMPTS.topicSummary(fieldTitle, topicTitle, description));
+  }
+
+  async generateTopicCheatsheet(
+    userId: string,
+    tier: string,
+    fieldTitle: string,
+    topicTitle: string,
+    description: string,
+  ): Promise<string> {
+    await this.checkAndIncrementUsage(userId, tier);
+    const provider = this.factory.getProvider();
+    return provider.generate(PROMPTS.topicCheatsheet(fieldTitle, topicTitle, description));
+  }
+
+  async generateTopicQuiz(
+    userId: string,
+    tier: string,
+    fieldTitle: string,
+    topicTitle: string,
+    difficulty: string,
+  ): Promise<{ questions: any[] }> {
+    await this.checkAndIncrementUsage(userId, tier);
+    const provider = this.factory.getProvider();
+    const raw = await provider.generate(PROMPTS.topicQuiz(fieldTitle, topicTitle, difficulty));
+    return JSON.parse(this.extractJson(raw));
+  }
+
   private extractJson(text: string): string {
     // Strip markdown code fences if present
     const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
