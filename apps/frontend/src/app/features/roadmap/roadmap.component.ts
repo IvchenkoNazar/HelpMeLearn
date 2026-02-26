@@ -50,12 +50,7 @@ import { environment } from '../../../environments/environment';
                 <h3 class="font-medium text-gray-900 dark:text-gray-100 text-sm leading-snug">
                   {{ pt.topics.title }}
                 </h3>
-                <span class="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs"
-                      [class.bg-green-100]="pt.status === 'completed'"
-                      [class.text-green-600]="pt.status === 'completed'"
-                      [class.bg-gray-100]="pt.status !== 'completed'"
-                      [class.dark:bg-gray-800]="pt.status !== 'completed'"
-                      [class.text-gray-400]="pt.status !== 'completed'">
+                <span [class]="'shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs ' + (pt.status === 'completed' ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500')">
                   {{ pt.status === 'completed' ? '✓' : '' }}
                 </span>
               </div>

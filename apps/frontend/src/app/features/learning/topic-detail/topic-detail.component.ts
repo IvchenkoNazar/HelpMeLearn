@@ -47,14 +47,9 @@ type Tab = 'summary' | 'cheatsheet' | 'quiz' | 'notes';
           @for (tab of tabs; track tab.id) {
             <button
               (click)="onTabChange(tab.id)"
-              class="px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors"
-              [class.border-primary-500]="activeTab() === tab.id"
-              [class.text-primary-600]="activeTab() === tab.id"
-              [class.dark:text-primary-400]="activeTab() === tab.id"
-              [class.border-transparent]="activeTab() !== tab.id"
-              [class.text-gray-500]="activeTab() !== tab.id"
-              [class.hover:text-gray-700]="activeTab() !== tab.id"
-              [class.dark:text-gray-400]="activeTab() !== tab.id"
+              [class]="activeTab() === tab.id
+                ? 'px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'"
             >
               {{ tab.label }}
             </button>
@@ -67,7 +62,7 @@ type Tab = 'summary' | 'cheatsheet' | 'quiz' | 'notes';
             @if (loadingContent()) {
               <div class="flex flex-col items-center gap-3 py-16">
                 <app-spinner size="lg" />
-                <p class="text-sm text-gray-400">Generating summary...</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">Generating summary...</p>
               </div>
             } @else if (summaryContent()) {
               <div class="flex justify-end mb-3">
@@ -87,7 +82,7 @@ type Tab = 'summary' | 'cheatsheet' | 'quiz' | 'notes';
             @if (loadingContent()) {
               <div class="flex flex-col items-center gap-3 py-16">
                 <app-spinner size="lg" />
-                <p class="text-sm text-gray-400">Generating cheatsheet...</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">Generating cheatsheet...</p>
               </div>
             } @else if (cheatsheetContent()) {
               <div class="flex justify-end gap-2 mb-3">
@@ -108,15 +103,13 @@ type Tab = 'summary' | 'cheatsheet' | 'quiz' | 'notes';
             @if (loadingContent()) {
               <div class="flex flex-col items-center gap-3 py-16">
                 <app-spinner size="lg" />
-                <p class="text-sm text-gray-400">Generating quiz...</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">Generating quiz...</p>
               </div>
             } @else if (quizResult()) {
               <!-- Quiz result -->
               <app-card>
                 <div class="text-center py-4">
-                  <div class="text-4xl font-bold mb-1"
-                       [class.text-green-500]="quizResult().passed"
-                       [class.text-red-500]="!quizResult().passed">
+                  <div [class]="'text-4xl font-bold mb-1 ' + (quizResult().passed ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400')">
                     {{ quizResult().score }}%
                   </div>
                   <p class="text-gray-600 dark:text-gray-400">
@@ -138,12 +131,9 @@ type Tab = 'summary' | 'cheatsheet' | 'quiz' | 'notes';
                       @for (opt of q.options; track opt) {
                         <button
                           (click)="selectQuizAnswer(q.id, opt)"
-                          class="text-left px-3 py-2.5 rounded-lg border-2 text-sm transition-all"
-                          [class.border-primary-500]="quizAnswers()[q.id] === opt"
-                          [class.bg-primary-50]="quizAnswers()[q.id] === opt"
-                          [class.dark:bg-primary-900/20]="quizAnswers()[q.id] === opt"
-                          [class.border-gray-200]="quizAnswers()[q.id] !== opt"
-                          [class.dark:border-gray-700]="quizAnswers()[q.id] !== opt"
+                          [class]="'text-left px-3 py-2.5 rounded-lg border-2 text-sm transition-all ' + (quizAnswers()[q.id] === opt
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-gray-900 dark:text-gray-100'
+                            : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200')"
                         >{{ opt }}</button>
                       }
                     </div>

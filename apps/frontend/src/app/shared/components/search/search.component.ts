@@ -59,9 +59,9 @@ import { SpinnerComponent } from '../spinner/spinner.component';
               </button>
             }
           } @else if (queryValue.length > 1 && !loading()) {
-            <div class="px-4 py-8 text-center text-sm text-gray-400">No results for "{{ queryValue }}"</div>
+            <div class="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">No results for "{{ queryValue }}"</div>
           } @else if (queryValue.length === 0) {
-            <div class="px-4 py-6 text-center text-sm text-gray-400">Start typing to search topics</div>
+            <div class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500">Start typing to search topics</div>
           }
         </div>
       </div>

@@ -76,9 +76,9 @@ import { environment } from '../../../environments/environment';
                    class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-primary-400 dark:hover:border-primary-600 transition-all">
                   <div>
                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ topic.title }}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ topic.fields?.title }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ topic.fields?.title }}</p>
                   </div>
-                  <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <svg class="h-4 w-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                   </svg>
                 </a>
