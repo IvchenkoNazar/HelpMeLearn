@@ -108,6 +108,24 @@ export class AIService {
     return JSON.parse(this.extractJson(raw));
   }
 
+  async adaptLearningProgram(
+    userId: string,
+    tier: string,
+    field: string,
+    level: string,
+    goal: string,
+    allTopics: string[],
+    completedTopics: string[],
+    weakTopics: string[],
+  ): Promise<{ recommendedTopics: string[]; summary: string }> {
+    await this.checkAndIncrementUsage(userId, tier);
+    const provider = this.factory.getProvider();
+    const raw = await provider.generate(
+      PROMPTS.adaptProgram(field, level, goal, allTopics, completedTopics, weakTopics),
+    );
+    return JSON.parse(this.extractJson(raw));
+  }
+
   private extractJson(text: string): string {
     // Strip markdown code fences if present
     const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);

@@ -111,4 +111,142 @@ export class ProgramsService {
       topicsCount: recommendedTopics.length,
     };
   }
+
+  async addTopic(userId: string, topicId: string) {
+    const { data: program } = await this.supabaseService
+      .getAdminClient()
+      .from('learning_programs')
+      .select('id, program_topics(topic_id)')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
+
+    if (!program) throw new Error('No active program');
+
+    const exists = program.program_topics?.some((pt: any) => pt.topic_id === topicId);
+    if (exists) throw new Error('Topic already in program');
+
+    const maxPriority = program.program_topics?.length ?? 0;
+
+    const { data, error } = await this.supabaseService
+      .getAdminClient()
+      .from('program_topics')
+      .insert({ program_id: program.id, topic_id: topicId, priority_score: maxPriority + 1, status: 'pending' })
+      .select('*, topics(*)')
+      .single();
+
+    if (error) throw new Error(error.message);
+    return data;
+  }
+
+  async removeTopic(userId: string, topicId: string) {
+    const { data: program } = await this.supabaseService
+      .getAdminClient()
+      .from('learning_programs')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
+
+    if (!program) throw new Error('No active program');
+
+    await this.supabaseService
+      .getAdminClient()
+      .from('program_topics')
+      .delete()
+      .eq('program_id', program.id)
+      .eq('topic_id', topicId);
+
+    return { removed: true };
+  }
+
+  async reorderTopics(userId: string, orderedTopicIds: string[]) {
+    const { data: program } = await this.supabaseService
+      .getAdminClient()
+      .from('learning_programs')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
+
+    if (!program) throw new Error('No active program');
+
+    await Promise.all(
+      orderedTopicIds.map((topicId, index) =>
+        this.supabaseService
+          .getAdminClient()
+          .from('program_topics')
+          .update({ priority_score: orderedTopicIds.length - index })
+          .eq('program_id', program.id)
+          .eq('topic_id', topicId),
+      ),
+    );
+
+    return { reordered: true };
+  }
+
+  async adaptProgram(userId: string, tier: string) {
+    const [program, weakAreas] = await Promise.all([
+      this.getMyProgram(userId),
+      this.supabaseService
+        .getAdminClient()
+        .from('quiz_results')
+        .select('topic_id, score, topics(title)')
+        .eq('user_id', userId)
+        .lt('score', 70)
+        .order('created_at', { ascending: false })
+        .limit(10),
+    ]);
+
+    if (!program) throw new Error('No active program');
+
+    const completedTopics = program.program_topics
+      ?.filter((pt: any) => pt.status === 'completed')
+      .map((pt: any) => pt.topics.title) ?? [];
+
+    const allTopics = await this.topicsService.findByField(program.field_id);
+    const topicTitles = allTopics.map((t: any) => t.title);
+    const weakTopicTitles = weakAreas.data?.map((r: any) => r.topics?.title).filter(Boolean) ?? [];
+
+    const aiResult = await this.aiService.adaptLearningProgram(
+      userId,
+      tier,
+      program.fields?.title ?? '',
+      program.current_level,
+      program.goal,
+      topicTitles,
+      completedTopics,
+      weakTopicTitles,
+    );
+
+    // Replace pending topics with AI recommendations (keep completed ones)
+    const admin = this.supabaseService.getAdminClient();
+
+    await admin
+      .from('program_topics')
+      .delete()
+      .eq('program_id', program.id)
+      .eq('status', 'pending');
+
+    const newTopics = allTopics.filter((t: any) =>
+      aiResult.recommendedTopics.some(
+        (title: string) =>
+          t.title.toLowerCase().includes(title.toLowerCase()) ||
+          title.toLowerCase().includes(t.title.toLowerCase()),
+      ),
+    );
+
+    if (newTopics.length > 0) {
+      await admin.from('program_topics').insert(
+        newTopics.map((t: any, i: number) => ({
+          program_id: program.id,
+          topic_id: t.id,
+          priority_score: newTopics.length - i,
+          status: 'pending',
+        })),
+      );
+    }
+
+    return { adapted: true, newTopicsCount: newTopics.length, summary: aiResult.summary };
+  }
 }

@@ -75,4 +75,28 @@ Return ONLY valid JSON:
     }
   ]
 }`,
+
+  adaptProgram: (
+    field: string,
+    level: string,
+    goal: string,
+    allTopics: string[],
+    completedTopics: string[],
+    weakTopics: string[],
+  ) => `
+You are a learning program designer for ${field} interview preparation.
+The candidate is at ${level} level. Their goal: ${goal}.
+
+Progress update:
+- Completed topics: ${completedTopics.length > 0 ? completedTopics.join(', ') : 'none yet'}
+- Weak areas (scored <70% on quiz): ${weakTopics.length > 0 ? weakTopics.join(', ') : 'none'}
+
+Available topics: ${allTopics.join(', ')}.
+
+Recommend the next 8 topics to focus on (excluding already completed ones). Prioritize weak areas.
+Return ONLY valid JSON:
+{
+  "recommendedTopics": ["topic1", "topic2"],
+  "summary": "brief explanation of why these topics were chosen"
+}`,
 };
