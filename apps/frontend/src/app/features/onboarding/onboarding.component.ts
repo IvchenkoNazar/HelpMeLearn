@@ -137,7 +137,11 @@ type Step = 'field' | 'level' | 'goal' | 'assessment' | 'generating';
         <!-- Step: Skill Assessment -->
         @if (currentStep() === 'assessment') {
           <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Quick skill check</h2>
-          <p class="text-gray-500 dark:text-gray-400 mb-6">{{ currentQuestionIndex() + 1 }} of {{ assessmentQuestions().length }} questions</p>
+          @if (!loadingAssessment() && assessmentQuestions().length > 0) {
+            <p class="text-gray-500 dark:text-gray-400 mb-6">{{ currentQuestionIndex() + 1 }} of {{ assessmentQuestions().length }} questions</p>
+          } @else {
+            <p class="text-gray-500 dark:text-gray-400 mb-6">&nbsp;</p>
+          }
 
           @if (loadingAssessment()) {
             <div class="flex flex-col items-center gap-4 py-12">
@@ -156,8 +160,12 @@ type Step = 'field' | 'level' | 'goal' | 'assessment' | 'generating';
                     [class.border-primary-500]="selectedAnswers()[currentQuestionIndex()] === i"
                     [class.bg-primary-50]="selectedAnswers()[currentQuestionIndex()] === i"
                     [class.dark:bg-primary-900/20]="selectedAnswers()[currentQuestionIndex()] === i"
+                    [class.text-primary-700]="selectedAnswers()[currentQuestionIndex()] === i"
+                    [class.dark:text-primary-300]="selectedAnswers()[currentQuestionIndex()] === i"
                     [class.border-gray-200]="selectedAnswers()[currentQuestionIndex()] !== i"
                     [class.dark:border-gray-700]="selectedAnswers()[currentQuestionIndex()] !== i"
+                    [class.text-gray-700]="selectedAnswers()[currentQuestionIndex()] !== i"
+                    [class.dark:text-gray-300]="selectedAnswers()[currentQuestionIndex()] !== i"
                   >{{ opt }}</button>
                 }
               </div>
