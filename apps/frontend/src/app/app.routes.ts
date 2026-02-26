@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
+import { superadminGuard } from './core/superadmin.guard';
 
 export const appRoutes: Routes = [
   {
@@ -36,6 +37,23 @@ export const appRoutes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      {
+        path: 'onboarding',
+        loadComponent: () =>
+          import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent),
+      },
+      {
+        path: 'admin',
+        canActivate: [superadminGuard],
+        children: [
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./features/admin/admin-users.component').then((m) => m.AdminUsersComponent),
+          },
+          { path: '', redirectTo: 'users', pathMatch: 'full' },
+        ],
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
