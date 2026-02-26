@@ -21,7 +21,7 @@ import { CardComponent } from '../../../shared/components/card/card.component';
         </div>
       }
 
-      <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <form (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
         <app-input
           label="Full name"
           type="text"

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
 @Component({
@@ -7,19 +8,24 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   standalone: true,
   imports: [SpinnerComponent],
   template: `
-    <div class="min-h-screen flex items-center justify-center">
+    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
       <app-spinner size="lg" />
     </div>
   `,
 })
-export class AuthCallbackComponent implements OnInit {
-  constructor(private router: Router) {}
+export class AuthCallbackComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  ngOnInit() {
-    // Supabase JS client handles the OAuth callback automatically
-    // via onAuthStateChange. Just redirect after a short delay.
-    setTimeout(() => {
-      this.router.navigate(['/dashboard']);
-    }, 1000);
+  constructor() {
+    effect(() => {
+      if (this.authService.initialized()) {
+        if (this.authService.isAuthenticated()) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/auth/login']);
+        }
+      }
+    });
   }
 }

@@ -7,20 +7,23 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private supabase: SupabaseClient;
   private sessionSignal = signal<Session | null>(null);
+  private initializedSignal = signal(false);
 
   readonly isAuthenticated = computed(() => !!this.sessionSignal());
   readonly currentUser = computed(() => this.sessionSignal()?.user ?? null);
   readonly accessToken = computed(() => this.sessionSignal()?.access_token ?? null);
+  readonly initialized = this.initializedSignal.asReadonly();
 
   constructor(private router: Router) {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabasePublishableKey);
-
-    this.supabase.auth.getSession().then(({ data }) => {
-      this.sessionSignal.set(data.session);
+    this.supabase = createClient(environment.supabaseUrl, environment.supabasePublishableKey, {
+      auth: {
+        lock: <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>) => fn(),
+      },
     });
 
     this.supabase.auth.onAuthStateChange((_event, session) => {
       this.sessionSignal.set(session);
+      this.initializedSignal.set(true);
     });
   }
 
