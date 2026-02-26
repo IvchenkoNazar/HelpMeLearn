@@ -16,6 +16,7 @@ import { QuizModule } from '../quiz/quiz.module';
 import { NotesModule } from '../notes/notes.module';
 import { BookmarksModule } from '../bookmarks/bookmarks.module';
 import { SearchModule } from '../search/search.module';
+import { ProgressModule } from '../progress/progress.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SearchModule } from '../search/search.module';
     NotesModule,
     BookmarksModule,
     SearchModule,
+    ProgressModule,
   ],
 })
 export class AppModule {}
