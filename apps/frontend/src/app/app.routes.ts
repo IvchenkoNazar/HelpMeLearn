@@ -67,6 +67,11 @@ export const appRoutes: Routes = [
             (m) => m.TopicDetailComponent,
           ),
       },
+      {
+        path: 'bookmarks',
+        loadComponent: () =>
+          import('./features/bookmarks/bookmarks.component').then((m) => m.BookmarksComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
