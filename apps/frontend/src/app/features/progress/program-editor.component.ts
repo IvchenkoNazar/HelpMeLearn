@@ -1,7 +1,7 @@
 // apps/frontend/src/app/features/progress/program-editor.component.ts
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -156,7 +156,6 @@ import { environment } from '../../../environments/environment';
 export class ProgramEditorComponent implements OnInit {
   private http = inject(HttpClient);
   private progressService = inject(ProgressService);
-  private router = inject(Router);
 
   loading = signal(true);
   adapting = signal(false);
