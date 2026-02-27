@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Put, UseGuards } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser, CurrentUserData } from '../auth/decorators/current-user.decorator';
@@ -15,6 +15,14 @@ export class ProfilesController {
 
   @Put('me')
   async updateMyProfile(
+    @CurrentUser() user: CurrentUserData,
+    @Body() body: { fullName?: string; avatarUrl?: string; dailyGoal?: number },
+  ) {
+    return this.profilesService.updateProfile(user.userId, body);
+  }
+
+  @Patch('me')
+  async patchMyProfile(
     @CurrentUser() user: CurrentUserData,
     @Body() body: { fullName?: string; avatarUrl?: string; dailyGoal?: number },
   ) {
