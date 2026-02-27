@@ -4,6 +4,7 @@ import { ThemeService } from '../../core/theme.service';
 import { AuthService } from '../../core/auth.service';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { SearchComponent } from '../../shared/components/search/search.component';
+import { ProgressService } from '../../features/progress/progress.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -77,9 +78,16 @@ import { SearchComponent } from '../../shared/components/search/search.component
 
         <a routerLink="/progress" routerLinkActive="bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400"
            [class]="navItemClass()" [title]="collapsed() ? 'Progress' : ''">
-          <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
+          <div class="relative">
+            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            @if (dueCount() > 0) {
+              <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-orange-500 text-white text-[10px] font-bold">
+                {{ dueCount() > 9 ? '9+' : dueCount() }}
+              </span>
+            }
+          </div>
           @if (!collapsed()) { <span>Progress</span> }
         </a>
 
@@ -165,9 +173,16 @@ import { SearchComponent } from '../../shared/components/search/search.component
         </a>
         <a routerLink="/progress" routerLinkActive="text-primary-600 dark:text-primary-400"
            class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 text-xs min-w-[48px] py-1">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
+          <div class="relative">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            @if (dueCount() > 0) {
+              <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-orange-500 text-white text-[10px] font-bold">
+                {{ dueCount() > 9 ? '9+' : dueCount() }}
+              </span>
+            }
+          </div>
           <span>Progress</span>
         </a>
         <a routerLink="/settings" routerLinkActive="text-primary-600 dark:text-primary-400"
@@ -185,6 +200,7 @@ import { SearchComponent } from '../../shared/components/search/search.component
 export class MainLayoutComponent {
   collapsed = signal(localStorage.getItem('sidebar-collapsed') === 'true');
   showSearch = signal(false);
+  dueCount = signal(0);
 
   @HostListener('document:keydown', ['$event'])
   onKeydown(e: KeyboardEvent) {
@@ -209,7 +225,12 @@ export class MainLayoutComponent {
   constructor(
     public themeService: ThemeService,
     public authService: AuthService,
-  ) {}
+    private progressService: ProgressService,
+  ) {
+    this.progressService.getDueReviews().then((reviews) => {
+      this.dueCount.set(reviews.length);
+    }).catch(() => {});
+  }
 
   toggleSidebar() {
     this.collapsed.update((v) => !v);
